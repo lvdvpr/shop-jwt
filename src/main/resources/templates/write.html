@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>write</title>
+    <link href="/main.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{ nav.html::navbar }"></div>
+
+<form action="/add" method="POST">
+    <input name="title" placeholder="물건이름">
+    <input name="price" placeholder="가격">
+    <input type="file" onchange="getURL(this)">
+    <img src="" style="width: 100px; height: auto; margin:10px 5px; display: block;">
+    <input type="hidden" name="image_url" value="">
+    <button type="submit">전송</button>
+</form>
+
+<script>
+    async function getURL(e){
+        let name = encodeURIComponent(e.files[0].name)
+        let presignedURL = await fetch('/presigned-url?filename=' + name)
+        presignedURL = await presignedURL.text()
+
+        let result = await fetch(presignedURL, {
+            method : 'PUT',
+            body : e.files[0]
+        })
+
+        if (result.ok) {
+            let splitURL = result.url.split("?")[0];
+            document.querySelector('img').src = splitURL;
+            document.querySelector('input[name="image_url"]').value = splitURL;
+        }
+    }
+</script>
+
+</body>
+</html>

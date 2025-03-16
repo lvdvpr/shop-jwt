@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>itemList</title>
+    <link href="/main.css" rel="stylesheet">
+    <style>
+        .pagination {
+            display: flex;
+            gap: 5px;
+        }
+        .pagination a {
+            padding: 8px 12px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            color: black;
+            border-radius: 4px;
+        }
+        .pagination a:hover {
+            background-color: #f1f1f1;
+        }
+        .pagination .active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{ nav.html::navbar }"></div>
+
+    <form action="/search" method="POST">
+        <input type="text" name="searchText" style="display : inline">
+        <button type="submit">검색</button>
+    </form>
+
+    <div class="card" th:each="item : ${itemList}">
+        <img th:src="${item.image_url != null ? item.image_url : 'https://placehold.co/300'}">
+        <div>
+            <a th:href="@{'/detail/' + ${item.id} }"><h4 th:text="${item.title}"></h4></a>
+            <p th:text="${item.price + '원'}"></p>
+            <a th:href="@{'/edit/' + ${item.id} }">✏️</a>
+            <span th:onclick="fetch('/delete?id=[[${item.id}]]', {method : 'DELETE'})
+            .then(r => r.text())
+            .then(() => {
+              location.reload();
+            })
+            ">🗑️</span>
+        </div>
+    </div>
+    <div class="pagination">
+        <a th:if="${hasPrevious}" th:href="@{'/list/'+${currentPage -1}}">« Prev</a>
+        <a th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
+           th:href="@{'/list/'+ ${pageNum}}"
+           th:text="${pageNum}">
+        </a>
+        <a th:if="${hasNext}" th:href="@{'/list/'+${currentPage +1}}">Next »</a>
+    </div>
+
+    <button class="btn">버튼</button>
+
+<script>
+
+    document.querySelectorAll('.btn')[0].addEventListener('click', function() {
+      fetch('/test1', {
+        method : 'POST',
+        headers : { 'Content-Type' : 'application/json' },
+        body : JSON.stringify({name : 'kim'})
+      })
+    })
+</script>
+</body>
+</html>

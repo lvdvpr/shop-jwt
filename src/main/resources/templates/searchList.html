@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>itemList</title>
+    <link href="/main.css" rel="stylesheet">
+    <style>
+        .pagination {
+            display: flex;
+            gap: 5px;
+        }
+        .pagination a {
+            padding: 8px 12px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            color: black;
+            border-radius: 4px;
+        }
+        .pagination a:hover {
+            background-color: #f1f1f1;
+        }
+        .pagination .active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{ nav.html::navbar }"></div>
+
+<form action="/search" method="POST">
+    <input type="text" name="searchText" style="display : inline">
+    <button type="submit">검색</button>
+</form>
+
+<div class="card" th:each="item : ${itemList}">
+    <img th:src="${item.image_url != null ? item.image_url : 'https://placehold.co/300'}">
+    <div>
+        <a th:href="@{'/detail/' + ${item.id} }"><h4 th:text="${item.title}"></h4></a>
+        <p th:text="${item.price + '원'}"></p>
+        <a th:href="@{'/edit/' + ${item.id} }">✏️</a>
+        <span th:onclick="fetch('/delete?id=[[${item.id}]]', {method : 'DELETE'})
+            .then(r => r.text())
+            .then(() => {
+              location.reload();
+            })
+            ">🗑️</span>
+    </div>
+</div>
+
+</body>
+</html>

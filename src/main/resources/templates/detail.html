@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>itemList</title>
+    <link href="/main.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{ nav.html::navbar }"></div>
+
+<div class="detail">
+    <h4>상세페이지</h4>
+
+    <div th:if="${item != null}">
+        <img th:src="${item.image_url != null ? item.image_url : 'https://placehold.co/300'}">
+        <h4 th:text="${item.title}"></h4>
+        <p th:text="${item.price + '원'}"></p>
+    </div>
+
+    <div th:if="${item == null}">
+        <p th:text="${errorMessage}"></p>
+    </div>
+
+    <form action="/order" method="POST">
+        <input name="title" th:value="${item.title}">
+        <input name="price" th:value="${item.price}">
+        <input name="count" placeholder="count">
+        <button>주문하기</button>
+    </form>
+
+    <form action="/addComment" method="POST" style="display: flex; align-items: center; gap: 10px;" sec:authorize="isAuthenticated()">
+        <strong sec:authentication="principal.username"></strong>
+        <input name="content" placeholder="댓글을 입력하세요">
+        <input name="parentId" th:value="${item.id}" style="display:none;">
+        <button type="submit">전송</button>
+    </form>
+    <p sec:authorize="!isAuthenticated()">로그인해야 댓글을 작성할 수 있습니다.</p>
+    <div th:if="${commentList != null}">
+        <div th:each="comment : ${commentList}">
+            <strong th:text="${comment.username}"></strong>
+            <span th:text="${comment.content}"></span>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
