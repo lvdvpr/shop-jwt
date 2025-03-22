@@ -1,13 +1,11 @@
 package com.apple.shop.member;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +22,7 @@ public class MyUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("일치하는 아이디 없음");
         }
         var user = result.get();
-        List<GrantedAuthority> authorities = new ArrayList<>();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("일반유저"));
 
         CustomUser customUser = new CustomUser(user.getUsername(), user.getPassword(), authorities);
